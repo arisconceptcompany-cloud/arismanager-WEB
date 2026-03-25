@@ -49,7 +49,7 @@ function EmployeLogin() {
             <i className="fa fa-user-tie me-2"></i>Espace Employé
           </div>
           <div className="auth-header-custom text-center mb-4">
-            <img src="/logoA.ico" alt="ARIS" width="60" height="60" />
+            <img src="/logo.png" alt="ARIS" width="60" height="60" />
             <h3 className="mt-3">Espace Employé</h3>
             <p className="text-muted">Connectez-vous à votre compte</p>
           </div>

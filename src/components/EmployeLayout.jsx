@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import Chat from './Chat';
 import './Layout.css';
 
 function EmployeLayout({ children }) {
@@ -113,6 +114,11 @@ function EmployeLayout({ children }) {
           {children}
         </div>
       </div>
+      <Chat 
+        userType="employee" 
+        userId={employe.id} 
+        userName={`${employe.prenom || ''} ${employe.nom || ''}`} 
+      />
     </div>
   );
 }

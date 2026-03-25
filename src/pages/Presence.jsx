@@ -90,6 +90,71 @@ function Presence() {
     return null;
   };
 
+  const calculateTotalWorkTime = (arrivee, depart) => {
+    if (!arrivee || !depart) return null;
+    
+    const arriveeTime = new Date(arrivee);
+    const departTime = new Date(depart);
+    
+    const diffMs = departTime - arriveeTime;
+    if (diffMs <= 0) return null;
+    
+    const totalMinutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    return { hours, minutes, totalMinutes };
+  };
+
+  const formatWorkTime = (workTime) => {
+    if (!workTime) return '-';
+    const { hours, minutes } = workTime;
+    return `${hours}h ${minutes.toString().padStart(2, '0')}min`;
+  };
+
+  const getWorkTimeStatus = (workTime) => {
+    if (!workTime) return 'text-muted';
+    if (workTime.totalMinutes >= 480) return 'text-success'; // 8h+
+    if (workTime.totalMinutes >= 360) return 'text-warning'; // 6h+
+    return 'text-danger';
+  };
+
+  const sortedEmployes = [...employes].sort((a, b) => {
+    const numA = parseInt((a.badge_id || '').replace('ARIS-', '')) || 0;
+    const numB = parseInt((b.badge_id || '').replace('ARIS-', '')) || 0;
+    return numA - numB;
+  });
+
+  const calculateDayStats = () => {
+    let totalEmployeesWithWork = 0;
+    let totalMinutesWorked = 0;
+    let employeesWithFullDay = 0;
+
+    sortedEmployes.forEach(emp => {
+      const { arrivee, depart } = getEmployePresence(emp.id);
+      const workTime = calculateTotalWorkTime(arrivee, depart);
+      if (workTime) {
+        totalEmployeesWithWork++;
+        totalMinutesWorked += workTime.totalMinutes;
+        if (workTime.totalMinutes >= 480) employeesWithFullDay++;
+      }
+    });
+
+    const avgMinutes = totalEmployeesWithWork > 0 ? Math.floor(totalMinutesWorked / totalEmployeesWithWork) : 0;
+    const avgHours = Math.floor(avgMinutes / 60);
+    const avgMins = avgMinutes % 60;
+
+    return {
+      totalEmployeesWithWork,
+      avgHours,
+      avgMins,
+      employeesWithFullDay,
+      totalMinutesWorked
+    };
+  };
+
+  const dayStats = calculateDayStats();
+
   const handleExportPDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -162,12 +227,6 @@ function Presence() {
     
     doc.save(`presence_${selectedDate}.pdf`);
   };
-
-  const sortedEmployes = [...employes].sort((a, b) => {
-    const numA = parseInt((a.badge_id || '').replace('ARIS-', '')) || 0;
-    const numB = parseInt((b.badge_id || '').replace('ARIS-', '')) || 0;
-    return numA - numB;
-  });
 
   if (loading) {
     return (
@@ -264,18 +323,17 @@ function Presence() {
                 <tr>
                   <th>Badge</th>
                   <th>Nom</th>
-                  <th>Prénom</th>
                   <th>Poste</th>
                   <th>Statut</th>
-                  <th>Heure Arrivée</th>
-                  <th>Heure Départ</th>
+                  <th>Arrivée</th>
+                  <th>Départ</th>
                   <th>Retard</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedEmployes.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="text-center py-4">
+                    <td colSpan="7" className="text-center py-4">
                       <i className="fa fa-users fa-2x text-muted mb-2"></i>
                       <p className="mb-0 text-muted">Aucun employé trouvé</p>
                     </td>
@@ -293,9 +351,8 @@ function Presence() {
                             {formatBadgeNumber(emp.badge_id)}
                           </span>
                         </td>
-                        <td><strong>{emp.nom || '-'}</strong></td>
-                        <td>{emp.prenom || '-'}</td>
-                        <td>{emp.poste || '-'}</td>
+                        <td><strong>{emp.nom || '-'} {emp.prenom ? emp.prenom.charAt(0) + '.' : ''}</strong></td>
+                        <td className="hide-mobile">{emp.poste || '-'}</td>
                         <td>
                           <span className={`badge ${
                             status === 'Présent' ? 'bg-success' : 
@@ -307,7 +364,6 @@ function Presence() {
                         <td>
                           {arrivee ? (
                             <span className="text-success fw-bold">
-                              <i className="fa fa-sign-in me-1"></i>
                               {formatTime(arrivee)}
                             </span>
                           ) : (
@@ -317,7 +373,6 @@ function Presence() {
                         <td>
                           {depart ? (
                             <span className="text-warning fw-bold">
-                              <i className="fa fa-sign-out me-1"></i>
                               {formatTime(depart)}
                             </span>
                           ) : (
@@ -327,7 +382,6 @@ function Presence() {
                         <td>
                           {retard && (
                             <span className="badge bg-danger">
-                              <i className="fa fa-clock me-1"></i>
                               {retard}
                             </span>
                           )}
@@ -338,6 +392,207 @@ function Presence() {
                 )}
               </tbody>
             </table>
+            
+            {/* MOBILE VIEW - Cards */}
+            <div className="mobile-cards-view p-2">
+              {sortedEmployes.length === 0 ? (
+                <div className="text-center py-4">
+                  <i className="fa fa-users fa-2x text-muted mb-2"></i>
+                  <p className="mb-0 text-muted">Aucun employé trouvé</p>
+                </div>
+              ) : (
+                sortedEmployes.map((emp, index) => {
+                  const { arrivee, depart } = getEmployePresence(emp.id);
+                  const status = getCurrentStatus(emp);
+                  const retard = getRetard(arrivee);
+                  
+                  return (
+                    <div key={emp.id || index} className="mobile-card">
+                      <div className="mobile-card-header">
+                        <span className="mobile-card-name">{emp.nom || '-'} {emp.prenom || ''}</span>
+                        <span className={`badge ${
+                          status === 'Présent' ? 'bg-success' : 
+                          status === 'Sorti' ? 'bg-warning text-dark' : 'bg-secondary'
+                        }`}>
+                          {status}
+                        </span>
+                      </div>
+                      <div className="mobile-card-info">
+                        <span className="mobile-card-label">Badge:</span>
+                        <span className="badge bg-dark">{formatBadgeNumber(emp.badge_id)}</span>
+                      </div>
+                      <div className="mobile-card-info">
+                        <span className="mobile-card-label">Poste:</span>
+                        <span className="mobile-card-value">{emp.poste || '-'}</span>
+                      </div>
+                      <div className="mobile-card-times">
+                        <div className="mobile-card-time">
+                          <div className="mobile-card-time-label">Arrivée</div>
+                          <div className="mobile-card-time-value text-success">
+                            {arrivee ? formatTime(arrivee) : '-'}
+                          </div>
+                        </div>
+                        <div className="mobile-card-time">
+                          <div className="mobile-card-time-label">Départ</div>
+                          <div className="mobile-card-time-value text-warning">
+                            {depart ? formatTime(depart) : '-'}
+                          </div>
+                        </div>
+                      </div>
+                      {retard && (
+                        <div className="mt-2 text-center">
+                          <span className="badge bg-danger">
+                            <i className="fa fa-clock me-1"></i>
+                            Retard: {retard}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card mt-4">
+        <div className="card-header bg-gradient text-white" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+          <h5 className="mb-0">
+            <i className="fa fa-clock me-2"></i>
+            Temps de Travail Total par Employé
+          </h5>
+        </div>
+        <div className="card-body p-0">
+          <div className="table-responsive">
+            <table className="table table-hover mb-0">
+              <thead className="table-light">
+                <tr>
+                  <th>Badge</th>
+                  <th>Nom</th>
+                  <th>Prénom</th>
+                  <th>Poste</th>
+                  <th>Heure Arrivée</th>
+                  <th>Heure Départ</th>
+                  <th>Temps Total</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedEmployes.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-4">
+                      <i className="fa fa-clock fa-2x text-muted mb-2"></i>
+                      <p className="mb-0 text-muted">Aucun employé trouvé</p>
+                    </td>
+                  </tr>
+                ) : (
+                  sortedEmployes.map((emp, index) => {
+                    const { arrivee, depart } = getEmployePresence(emp.id);
+                    const workTime = calculateTotalWorkTime(arrivee, depart);
+                    const status = getCurrentStatus(emp);
+                    
+                    return (
+                      <tr key={emp.id || index}>
+                        <td>
+                          <span className="badge bg-dark">
+                            {formatBadgeNumber(emp.badge_id)}
+                          </span>
+                        </td>
+                        <td><strong>{emp.nom || '-'}</strong></td>
+                        <td>{emp.prenom || '-'}</td>
+                        <td>{emp.poste || '-'}</td>
+                        <td>
+                          {arrivee ? (
+                            <span className="text-success">
+                              <i className="fa fa-sign-in me-1"></i>
+                              {formatTime(arrivee)}
+                            </span>
+                          ) : (
+                            <span className="text-muted">-</span>
+                          )}
+                        </td>
+                        <td>
+                          {depart ? (
+                            <span className="text-warning">
+                              <i className="fa fa-sign-out me-1"></i>
+                              {formatTime(depart)}
+                            </span>
+                          ) : (
+                            <span className="text-muted">-</span>
+                          )}
+                        </td>
+                        <td>
+                          {workTime ? (
+                            <span className={`fw-bold ${getWorkTimeStatus(workTime)}`}>
+                              <i className="fa fa-hourglass-half me-1"></i>
+                              {formatWorkTime(workTime)}
+                            </span>
+                          ) : (
+                            <span className="text-muted">-</span>
+                          )}
+                        </td>
+                        <td>
+                          {workTime ? (
+                            workTime.totalMinutes >= 480 ? (
+                              <span className="badge bg-success">
+                                <i className="fa fa-check me-1"></i>
+                                Jour complet
+                              </span>
+                            ) : workTime.totalMinutes >= 360 ? (
+                              <span className="badge bg-warning text-dark">
+                                <i className="fa fa-exclamation me-1"></i>
+                                Partiel
+                              </span>
+                            ) : (
+                              <span className="badge bg-danger">
+                                <i className="fa fa-times me-1"></i>
+                                Insuffisant
+                              </span>
+                            )
+                          ) : (
+                            <span className="badge bg-secondary">
+                              <i className="fa fa-minus me-1"></i>
+                              Non poinclé
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="card-footer bg-light">
+          <div className="row text-center">
+            <div className="col-3">
+              <div className="border-end">
+                <h5 className="mb-0 text-primary">{dayStats.totalEmployeesWithWork}</h5>
+                <small className="text-muted">Employés pointés</small>
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="border-end">
+                <h5 className="mb-0 text-success">
+                  {dayStats.avgHours}h {dayStats.avgMins.toString().padStart(2, '0')}min
+                </h5>
+                <small className="text-muted">Moyenne</small>
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="border-end">
+                <h5 className="mb-0 text-info">{dayStats.employeesWithFullDay}</h5>
+                <small className="text-muted">Jours complets (8h+)</small>
+              </div>
+            </div>
+            <div className="col-3">
+              <h5 className="mb-0 text-warning">
+                {Math.floor(dayStats.totalMinutesWorked / 60)}h {(dayStats.totalMinutesWorked % 60).toString().padStart(2, '0')}min
+              </h5>
+              <small className="text-muted">Total heures</small>
+            </div>
           </div>
         </div>
       </div>

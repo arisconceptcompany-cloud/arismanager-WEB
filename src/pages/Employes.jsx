@@ -405,7 +405,32 @@ function Employes() {
           {selectedEmploye && (
             <div className="row">
               <div className="col-md-4 text-center border-end">
-                <div className="avatar-circle mx-auto mb-3" style={{ width: '100px', height: '100px', fontSize: '36px' }}>
+                {selectedEmploye.photo ? (
+                  <img 
+                    src={`/api/photos/${selectedEmploye.photo}`}
+                    alt={`${selectedEmploye.prenom} ${selectedEmploye.nom}`}
+                    style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #dee2e6' }}
+                    className="mb-3"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                <div 
+                  className="avatar-circle mx-auto mb-3 bg-primary" 
+                  style={{ 
+                    width: '100px', 
+                    height: '100px', 
+                    fontSize: '36px',
+                    borderRadius: '50%',
+                    display: selectedEmploye.photo ? 'none' : 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontWeight: 'bold'
+                  }}
+                >
                   {((selectedEmploye.prenom || '')[0] || '')}{((selectedEmploye.nom || '')[0] || '')}
                 </div>
                 <h5>{selectedEmploye.nom} {selectedEmploye.prenom}</h5>
@@ -475,7 +500,32 @@ function Employes() {
           {selectedEmploye && (
             <div>
               <div className="text-center mb-4">
-                <div className="avatar-circle mx-auto mb-2" style={{ width: '70px', height: '70px', fontSize: '24px' }}>
+                {selectedEmploye.photo ? (
+                  <img 
+                    src={`/api/photos/${selectedEmploye.photo}`}
+                    alt={`${selectedEmploye.prenom} ${selectedEmploye.nom}`}
+                    style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #dee2e6' }}
+                    className="mb-2"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                <div 
+                  className="avatar-circle mx-auto mb-2 bg-primary" 
+                  style={{ 
+                    width: '70px', 
+                    height: '70px', 
+                    fontSize: '24px',
+                    borderRadius: '50%',
+                    display: selectedEmploye.photo ? 'none' : 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontWeight: 'bold'
+                  }}
+                >
                   {((selectedEmploye.prenom || '')[0] || '')}{((selectedEmploye.nom || '')[0] || '')}
                 </div>
                 <h5>{selectedEmploye.nom} {selectedEmploye.prenom}</h5>

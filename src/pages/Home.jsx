@@ -218,21 +218,21 @@ function Home() {
               <div className="stat-icon">
                 <i className="fa fa-key"></i>
               </div>
-              <p className="mt-2 mb-0 text-white"><small>Mot de passe</small></p>
+              <p className="mt-2 mb-0 text-white"><small>Securite</small></p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="row mt-4">
-        <div className="col-lg-8">
+        <div className="col-12 col-lg-8">
           <div className="card">
             <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
               <h5 className="mb-0"><i className="fa fa-qrcode me-2"></i>Pointage en Temps Réel</h5>
               <span className="badge bg-light text-dark">{presences.length} pointages</span>
             </div>
             <div className="card-body p-0">
-              <div className="table-responsive">
+              <div className="table-responsive d-none d-md-block">
                 <table className="table table-hover mb-0">
                   <thead className="table-light">
                     <tr>
@@ -268,11 +268,37 @@ function Home() {
                   </tbody>
                 </table>
               </div>
+              <div className="d-md-none p-2">
+                {presences.length === 0 ? (
+                  <div className="text-center text-muted py-4">
+                    <i className="fa fa-qrcode fa-2x mb-2"></i>
+                    <p>Aucun pointage aujourd'hui</p>
+                  </div>
+                ) : (
+                  presences.map((presence, index) => (
+                    <div key={presence.id || index} className={`pointage-card p-2 mb-2 rounded ${presence.type === 'entrer' ? 'bg-success bg-opacity-10 border-start border-success' : 'bg-warning bg-opacity-10 border-start border-warning'}`}>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div>
+                          <strong className="me-2">{presence.nom} {presence.prenom}</strong>
+                          <span className="badge bg-secondary">{presence.poste || '-'}</span>
+                        </div>
+                        <span className={`badge ${presence.type === 'entrer' ? 'bg-success' : 'bg-warning text-dark'}`}>
+                          {presence.type === 'entrer' ? 'Entrée' : 'Sortie'}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-muted small">
+                        <i className="fa fa-clock me-1"></i>
+                        {formatTime(presence.scanned_at)}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="col-lg-4">
+        <div className="col-lg-4 d-none d-lg-block">
           <div className="card notifications-card">
             <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
               <h5 className="mb-0"><i className="fa fa-bell me-2"></i>Notifications</h5>
@@ -307,7 +333,7 @@ function Home() {
       </div>
 
       {lastScan && (
-        <div className="alert alert-success mt-4 animate__animated animate__fadeIn">
+        <div className="alert alert-success mt-4 animate__animated animate__fadeIn d-none d-md-block">
           <i className="fa fa-bell me-2"></i>
           <strong>Dernier scan:</strong> {lastScan.type === 'entrer' ? 'Entrée' : 'Sortie'} de {lastScan.nom} {lastScan.prenom} à {formatTime(lastScan.scanned_at)}
         </div>

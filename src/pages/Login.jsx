@@ -36,7 +36,7 @@ function Login() {
             <i className="fa fa-shield-alt me-2"></i>Espace Administrateur
           </div>
           <div className="auth-header-custom text-center mb-4">
-            <img src="/logoA.ico" alt="ARIS" width="60" height="60" />
+            <img src="/logo.png" alt="ARIS" width="60" height="60" />
             <h3 className="mt-3">ARIS Manager</h3>
             <p className="text-muted">Connexion à votre compte</p>
           </div>

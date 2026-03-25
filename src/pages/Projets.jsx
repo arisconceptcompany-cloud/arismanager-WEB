@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { getProjets, createProjet, updateProjet, deleteProjet, getAllEmployes } from '../services/api';
+import { getProjets, createProjet, updateProjet, deleteProjet, getAllEmployes, uploadProjetFile, getProjetFiles, downloadProjetFile, deleteProjetFile } from '../services/api';
 import './Pages.css';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
-import { FaPlus, FaEye, FaEdit, FaTrash, FaSearch, FaFilter, FaChartLine, FaClock, FaCheckCircle, FaHourglass, FaUsers, FaUser } from 'react-icons/fa';
+import { FaPlus, FaEye, FaEdit, FaTrash, FaSearch, FaFilter, FaChartLine, FaClock, FaCheckCircle, FaHourglass, FaUsers, FaUser, FaFileUpload, FaFileDownload, FaFileAlt, FaTimes } from 'react-icons/fa';
 
 function Projets() {
   const [projets, setProjets] = useState([]);
@@ -19,6 +19,8 @@ function Projets() {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const [projetFiles, setProjetFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   const [formData, setFormData] = useState({
     nom: '',
@@ -131,6 +133,68 @@ function Projets() {
         ? prev.employes.filter(id => id !== employeeId)
         : [...prev.employes, employeeId]
     }));
+  };
+
+  const loadProjetFiles = async (projetId) => {
+    try {
+      const files = await getProjetFiles(projetId);
+      setProjetFiles(files || []);
+    } catch (error) {
+      console.error('Error loading projet files:', error);
+      setProjetFiles([]);
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !selectedProjet) return;
+    
+    setUploading(true);
+    try {
+      await uploadProjetFile(selectedProjet.id, file);
+      showToast('Fichier uploadé avec succès');
+      await loadProjetFiles(selectedProjet.id);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      showToast('Erreur lors de l\'upload du fichier', 'danger');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleFileDownload = async (file) => {
+    try {
+      await downloadProjetFile(selectedProjet.id, file.id, file.nom_fichier);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      showToast('Erreur lors du téléchargement', 'danger');
+    }
+  };
+
+  const handleFileDelete = async (fileId) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')) return;
+    
+    try {
+      await deleteProjetFile(selectedProjet.id, fileId);
+      showToast('Fichier supprimé avec succès');
+      await loadProjetFiles(selectedProjet.id);
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      showToast('Erreur lors de la suppression', 'danger');
+    }
+  };
+
+  const handleOpenDetailModal = (projet) => {
+    setSelectedProjet(projet);
+    setShowDetailModal(true);
+    loadProjetFiles(projet.id);
+  };
+
+  const handleCloseDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedProjet(null);
+    setProjetFiles([]);
   };
 
   const filteredProjets = projets.filter(projet => {
@@ -364,10 +428,7 @@ function Projets() {
                         <div className="d-flex justify-content-center gap-1">
                           <button
                             className="btn btn-sm btn-outline-info rounded-circle p-2"
-                            onClick={() => {
-                              setSelectedProjet(projet);
-                              setShowDetailModal(true);
-                            }}
+                            onClick={() => handleOpenDetailModal(projet)}
                             title="Voir détails"
                             style={{ width: '36px', height: '36px' }}
                           >
@@ -520,7 +581,7 @@ function Projets() {
         </Form>
       </Modal>
 
-      <Modal show={showDetailModal} onHide={() => setShowDetailModal(false)} size="lg">
+      <Modal show={showDetailModal} onHide={handleCloseDetailModal} size="lg">
         <Modal.Header closeButton className="border-0 pb-0">
           <Modal.Title className="d-flex align-items-center gap-2">
             <FaEye className="text-info" />
@@ -610,11 +671,68 @@ function Projets() {
                   )}
                 </div>
               </div>
+
+              <div className="card bg-light border-0 mt-3">
+                <div className="card-body">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h6 className="text-muted mb-0">
+                      <FaFileAlt className="me-1" /> Fichiers ({projetFiles.length})
+                    </h6>
+                    <label className="btn btn-sm btn-outline-primary mb-0">
+                      <FaFileUpload className="me-1" />
+                      {uploading ? 'Upload...' : 'Ajouter un fichier'}
+                      <input
+                        type="file"
+                        className="d-none"
+                        onChange={handleFileUpload}
+                        disabled={uploading}
+                      />
+                    </label>
+                  </div>
+                  
+                  {projetFiles.length === 0 ? (
+                    <p className="text-muted mb-0">Aucun fichier</p>
+                  ) : (
+                    <div className="list-group list-group-flush">
+                      {projetFiles.map((file) => (
+                        <div key={file.id} className="list-group-item px-0 py-2 d-flex justify-content-between align-items-center border-0">
+                          <div className="d-flex align-items-center">
+                            <FaFileAlt className="me-2 text-secondary" />
+                            <div>
+                              <div className="fw-medium" style={{ fontSize: '0.875rem' }}>{file.originalName}</div>
+                              <small className="text-muted">
+                                {file.size ? `${(file.size / 1024).toFixed(1)} KB` : ''} 
+                                {file.uploadedAt ? ` • ${new Date(file.uploadedAt).toLocaleDateString('fr-FR')}` : ''}
+                              </small>
+                            </div>
+                          </div>
+                          <div className="btn-group btn-group-sm">
+                            <button
+                              className="btn btn-outline-success"
+                              onClick={() => handleFileDownload(file)}
+                              title="Télécharger"
+                            >
+                              <FaFileDownload />
+                            </button>
+                            <button
+                              className="btn btn-outline-danger"
+                              onClick={() => handleFileDelete(file.id)}
+                              title="Supprimer"
+                            >
+                              <FaTimes />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </>
           )}
         </Modal.Body>
         <Modal.Footer className="border-0">
-          <Button variant="outline-secondary" onClick={() => setShowDetailModal(false)}>
+          <Button variant="outline-secondary" onClick={handleCloseDetailModal}>
             Fermer
           </Button>
         </Modal.Footer>

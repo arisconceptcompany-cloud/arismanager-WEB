@@ -7,7 +7,7 @@ function ChooseLogin() {
     <Bg>
       <div className="choose-login-wrapper">
         <div className="text-center mb-4">
-          <img src="/logoA.ico" alt="ARIS" width="80" height="80" />
+          <img src="/logo.png" alt="ARIS" width="80" height="80" />
           <h2 className="mt-3 ">Bienvenue sur ArisManager</h2>
           <p className="">Choisissez votre espace de connexion</p>
         </div>

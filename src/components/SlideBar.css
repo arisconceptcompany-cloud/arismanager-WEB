@@ -5,25 +5,28 @@
   left: 0;
   top: 0;
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-  padding: 20px 0;
+  padding: 15px 0;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, left 0.3s ease;
+  z-index: 1001;
+  overflow-y: auto;
 }
 
 .logo-container {
   text-align: center;
-  padding: 20px;
-  margin-bottom: 30px;
+  padding: 15px;
+  margin-bottom: 20px;
 }
 
 .logo-container img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
 }
 
 .logo-container h4 {
   color: white;
-  margin-top: 10px;
-  font-size: 18px;
+  margin-top: 8px;
+  font-size: 16px;
 }
 
 .slidebar .nav {
@@ -31,22 +34,28 @@
 }
 
 .slidebar .nav-item {
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
 
 .slidebar .nav-link {
   display: flex;
   align-items: center;
-  padding: 12px 15px;
+  padding: 10px 12px;
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   border-radius: 8px;
   transition: all 0.3s;
+  font-size: 14px;
 }
 
 .slidebar .nav-link i {
-  width: 25px;
-  font-size: 16px;
+  width: 22px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.slidebar .nav-link span {
+  margin-left: 10px;
 }
 
 .slidebar .nav-link:hover {
@@ -57,4 +66,57 @@
 .slidebar .nav-link.active {
   background: #0d6efd;
   color: white;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .slidebar {
+    transform: translateX(-100%);
+    left: -250px;
+  }
+  
+  .slidebar.open {
+    transform: translateX(0);
+    left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .slidebar {
+    width: 280px;
+    padding: 10px 0;
+  }
+  
+  .logo-container {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+  
+  .logo-container img {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .logo-container h4 {
+    font-size: 15px;
+  }
+  
+  .slidebar .nav-link {
+    padding: 10px;
+  }
+  
+  .slidebar .nav-link i {
+    width: 20px;
+    font-size: 14px;
+  }
+  
+  .slidebar .nav-link span {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 576px) {
+  .slidebar {
+    width: 260px;
+  }
 }

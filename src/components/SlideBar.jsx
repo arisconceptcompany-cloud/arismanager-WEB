@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import './SlideBar.css';
 
-function SlideBar() {
+function SlideBar({ isOpen, onClose }) {
   const menuItems = [
     { path: '/home', icon: 'fa-home', label: 'Accueil' },
     { path: '/employes', icon: 'fa-users', label: 'Employés' },
@@ -14,23 +15,36 @@ function SlideBar() {
     { path: '/rapport', icon: 'fa-chart-bar', label: 'Rapports' },
   ];
 
+  const handleLinkClick = () => {
+    if (window.innerWidth <= 1024) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="slidebar">
-      <div className="logo-container">
-        <img src="/logoA.ico" alt="ARIS" className="logo" />
-        <h4>ARIS Manager</h4>
+    <>
+      <div className={`slidebar ${isOpen ? 'open' : ''}`}>
+        <div className="logo-container">
+          <img src="/logo.png" alt="ARIS" className="logo" />
+          <h4>ARIS Manager</h4>
+        </div>
+        <ul className="nav flex-column">
+          {menuItems.map((item) => (
+            <li className="nav-item" key={item.path}>
+              <NavLink 
+                to={item.path} 
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={handleLinkClick}
+              >
+                <i className={`fa ${item.icon}`}></i>
+                <span>{item.label}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul className="nav flex-column">
-        {menuItems.map((item) => (
-          <li className="nav-item" key={item.path}>
-            <NavLink to={item.path} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <i className={`fa ${item.icon}`}></i>
-              <span>{item.label}</span>
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-    </div>
+      {isOpen && <div className="sidebar-overlay active" onClick={onClose}></div>}
+    </>
   );
 }
 

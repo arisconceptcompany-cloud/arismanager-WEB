@@ -204,3 +204,101 @@
 .notification-item.border-primary {
   border-left: 4px solid #6366f1 !important;
 }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .home-page {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    padding: 10px;
+  }
+  
+  .page-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .stat-card .card-body {
+    padding: 15px 10px;
+  }
+  
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .stat-card h3 {
+    font-size: 20px;
+  }
+  
+  .stat-card p {
+    font-size: 9px;
+  }
+  
+  .notifications-card {
+    margin-top: 15px;
+  }
+  
+  .notifications-list {
+    max-height: 300px !important;
+  }
+  
+  .notification-item {
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .home-page {
+    padding: 8px;
+  }
+  
+  .stat-card {
+    margin-bottom: 8px;
+  }
+  
+  .stat-card .card-body {
+    padding: 12px 8px;
+    gap: 5px;
+  }
+  
+  .stat-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+  
+  .stat-card h3 {
+    font-size: 18px;
+  }
+  
+  .stat-card p {
+    font-size: 8px;
+  }
+}
+
+/* Ensure notifications don't overlap content on mobile */
+@media (max-width: 768px) {
+  .main-header {
+    z-index: 1000;
+  }
+  
+  .content-area {
+    padding-bottom: 70px;
+  }
+  
+  /* Mobile pointage cards */
+  .pointage-card {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .pointage-card strong {
+    font-size: 13px;
+  }
+}

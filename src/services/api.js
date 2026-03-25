@@ -386,3 +386,54 @@ export const getBadgeExemple = async () => {
     return null;
   }
 };
+
+export const uploadProjetFile = async (projetId, file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await api.post(`/api/projets/${projetId}/upload`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export const getProjetFiles = async (projetId) => {
+  try {
+    const response = await axios.get(`/api/projets/${projetId}/files`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching projet files:', error);
+    return [];
+  }
+};
+
+export const downloadProjetFile = async (projetId, fileId, fileName) => {
+  try {
+    const response = await axios.get(`/api/projets/${projetId}/download/${fileId}`, {
+      responseType: 'arraybuffer',
+    });
+    const blob = new Blob([response.data]);
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }, 100);
+    return true;
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    alert('Erreur lors du téléchargement: ' + (error.message || 'Erreur inconnue'));
+    return false;
+  }
+};
+
+export const deleteProjetFile = async (projetId, fileId) => {
+  const response = await axios.delete(`/api/projets/${projetId}/files/${fileId}`);
+  return response.data;
+};

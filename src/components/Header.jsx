@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Header.css';
 
-function Header({ user, onLogout }) {
+function Header({ user, onLogout, onToggleSidebar }) {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [loading, setLoading] = useState(false);
+  const notifRef = useRef(null);
 
   useEffect(() => {
     loadNotifications();
@@ -12,9 +13,21 @@ function Header({ user, onLogout }) {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    }
+    if (showNotifications) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showNotifications]);
+
   const loadNotifications = async () => {
     try {
-      const response = await fetch('https://localhost:3000/api/conges/pending');
+      const response = await fetch('/api/conges/pending');
       if (response.ok) {
         const data = await response.json();
         setNotifications(data);
@@ -31,13 +44,20 @@ function Header({ user, onLogout }) {
     }
   };
 
+  const closeNotifications = () => {
+    setShowNotifications(false);
+  };
+
   return (
     <header className="main-header">
       <div className="header-left">
+        <button className="mobile-menu-toggle" onClick={onToggleSidebar} aria-label="Menu">
+          <i className="fa fa-bars"></i>
+        </button>
         <h5>Gestion des Ressources Humaines</h5>
       </div>
       <div className="header-right">
-        <div className="notification-container">
+        <div className="notification-container" ref={notifRef}>
           <button 
             className="btn btn-link position-relative"
             onClick={handleNotificationClick}
@@ -56,9 +76,14 @@ function Header({ user, onLogout }) {
             <div className="notification-dropdown">
               <div className="notification-header">
                 <h6 className="mb-0">Notifications</h6>
-                <button className="btn btn-sm btn-link" onClick={loadNotifications} disabled={loading}>
-                  <i className={`fa fa-refresh ${loading ? 'fa-spin' : ''}`}></i>
-                </button>
+                <div className="d-flex gap-2">
+                  <button className="btn btn-sm btn-link" onClick={loadNotifications} disabled={loading}>
+                    <i className={`fa fa-refresh ${loading ? 'fa-spin' : ''}`}></i>
+                  </button>
+                  <button className="btn btn-sm btn-link" onClick={closeNotifications}>
+                    <i className="fa fa-times"></i>
+                  </button>
+                </div>
               </div>
               <div className="notification-list">
                 {notifications.length === 0 ? (
@@ -101,7 +126,8 @@ function Header({ user, onLogout }) {
         
         <span className="user-name">{user?.email}</span>
         <button className="btn btn-danger btn-sm" onClick={onLogout}>
-          <i className="fa fa-sign-out-alt"></i> Déconnexion
+          <i className="fa fa-sign-out-alt"></i>
+          <span className="d-none d-sm-inline ms-1">Déconnexion</span>
         </button>
       </div>
     </header>

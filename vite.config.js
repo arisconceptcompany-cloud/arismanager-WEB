@@ -9,9 +9,14 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
+    port: 5173,
     https: {
       key: fs.readFileSync(path.join(certPath, 'key.pem')),
       cert: fs.readFileSync(path.join(certPath, 'cert.pem'))
+    },
+    hmr: {
+      protocol: 'wss',
+      port: 5173
     },
     proxy: {
       '/api/login': {
@@ -35,40 +40,56 @@ export default defineConfig({
         secure: false
       },
       '/api': {
-        target: 'https://localhost:3000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false
       },
       '/photos': {
-        target: 'https://localhost:3000',
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
+      },
+      '/api/photos': {
+        target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false
       },
       '/badge': {
-        target: 'https://localhost:3000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false
       },
       '/badge-exemple': {
-        target: 'https://localhost:3000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false
       },
       '/login': {
-        target: 'https://localhost:3000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false
       },
       '/logout': {
-        target: 'https://localhost:3000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false
       },
       '/api/sse': {
-        target: 'https://localhost:3000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false,
         ws: true
+      },
+      '/socket.io': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+        ws: true
+      },
+      '/chat-files': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
       }
     }
   }
