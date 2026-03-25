@@ -1,0 +1,60 @@
+.slidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  padding: 20px 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.logo-container {
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.logo-container img {
+  width: 60px;
+  height: 60px;
+}
+
+.logo-container h4 {
+  color: white;
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.slidebar .nav {
+  padding: 0 10px;
+}
+
+.slidebar .nav-item {
+  margin-bottom: 5px;
+}
+
+.slidebar .nav-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.slidebar .nav-link i {
+  width: 25px;
+  font-size: 16px;
+}
+
+.slidebar .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.slidebar .nav-link.active {
+  background: #0d6efd;
+  color: white;
+}

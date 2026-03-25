@@ -1,0 +1,223 @@
+.page-container {
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.page-title {
+  color: #1a1a2e;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.page-container .card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.page-container .card-header {
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  padding: 15px 20px;
+}
+
+.page-container .card-header h5 {
+  margin: 0;
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+.page-container .table {
+  font-size: 13px;
+}
+
+.page-container .table thead th {
+  background: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  color: #495057;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+.page-container .table tbody td {
+  padding: 8px 10px;
+  vertical-align: middle;
+}
+
+.table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.page-container .table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.page-container .badge {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.page-container .btn-sm {
+  padding: 3px 6px;
+  font-size: 11px;
+}
+
+.page-container .progress {
+  border-radius: 5px;
+}
+
+.page-container .progress-bar {
+  color: white;
+  font-weight: 600;
+}
+
+.avatar-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.table-warning {
+  background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+.bg-pink {
+  background-color: #e83e8c !important;
+}
+
+.stat-card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+}
+
+.stat-card.present {
+  border-left: 4px solid #198754;
+}
+
+.stat-card.retard {
+  border-left: 4px solid #ffc107;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-radius: 12px;
+  gap: 15px;
+  color: white;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.stat-card-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-card-success {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.stat-card-info {
+  background: linear-gradient(135deg, #0fd850 0%, #f9f047 100%);
+  color: #1a1a2e;
+}
+
+.stat-card-warning {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 12px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.action-icons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #f1f3f5;
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+}
+
+.action-btn-view {
+  color: #0d6efd;
+}
+
+.action-btn-view:hover {
+  background: #0d6efd;
+  color: white;
+}
+
+.action-btn-edit {
+  color: #fd7e14;
+}
+
+.action-btn-edit:hover {
+  background: #fd7e14;
+  color: white;
+}
+
+.action-btn-refresh {
+  color: #198754;
+}
+
+.action-btn-refresh:hover {
+  background: #198754;
+  color: white;
+}
+
+.action-btn i {
+  font-size: 14px;
+}

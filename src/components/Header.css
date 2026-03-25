@@ -1,0 +1,132 @@
+.main-header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  min-height: 70px;
+}
+
+.header-right {
+  flex-shrink: 0;
+}
+
+.header-left h5 {
+  margin: 0;
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-name {
+  color: #666;
+  font-size: 14px;
+}
+
+.notification-container {
+  position: relative;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 350px;
+  max-height: 400px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  background: #f8f9fa;
+}
+
+.notification-header h6 {
+  font-weight: 600;
+  color: #333;
+}
+
+.notification-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notification-empty {
+  padding: 30px;
+  text-align: center;
+  color: #666;
+}
+
+.notification-empty i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.notification-empty p {
+  margin: 0;
+}
+
+.notification-item {
+  display: flex;
+  padding: 12px 15px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.notification-item:hover {
+  background: #f8f9fa;
+}
+
+.notification-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.notification-icon i {
+  color: white;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-content strong {
+  color: #333;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.notification-content p {
+  color: #666;
+  margin: 0;
+}
+
+.notification-footer {
+  padding: 10px 15px;
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+  text-align: center;
+}

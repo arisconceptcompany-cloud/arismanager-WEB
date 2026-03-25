@@ -1,0 +1,11 @@
+.bg-container {
+  min-height: 100vh;
+  background-image: url('/bg.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 30px 20px;
+  overflow-y: auto;
+}
