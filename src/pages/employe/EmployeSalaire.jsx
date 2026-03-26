@@ -35,7 +35,7 @@ function EmployeSalaire() {
     }
 
     try {
-      const response = await fetch(`https://localhost:3000/api/employe/salaires/${token}`);
+      const response = await fetch(`/api/employe/salaires/${token}`);
       if (response.ok) {
         const data = await response.json();
         setSalaries(data);

@@ -44,7 +44,7 @@ function EmployeProjets() {
 
     setLoading(true);
     try {
-      const response = await fetch(`https://localhost:3000/api/employe/projets/${token}`);
+      const response = await fetch(`/api/employe/projets/${token}`);
       if (response.ok) {
         const data = await response.json();
         setProjets(data || []);
@@ -103,8 +103,8 @@ function EmployeProjets() {
       };
 
       const url = editingProjet
-        ? `https://localhost:3000/api/employe/projets/${token}/${editingProjet.id}`
-        : `https://localhost:3000/api/employe/projets/${token}`;
+        ? `/api/employe/projets/${token}/${editingProjet.id}`
+        : `/api/employe/projets/${token}`;
       
       const method = editingProjet ? 'PUT' : 'POST';
 
@@ -134,7 +134,7 @@ function EmployeProjets() {
 
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
       try {
-        const response = await fetch(`https://localhost:3000/api/employe/projets/${token}/${id}`, {
+        const response = await fetch(`/api/employe/projets/${token}/${id}`, {
           method: 'DELETE'
         });
 

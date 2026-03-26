@@ -44,9 +44,9 @@ function EmployeRapport() {
 
     try {
       const [salariesRes, presencesRes, congesRes] = await Promise.all([
-        fetch(`https://localhost:3000/api/employe/salaires/${token}`),
-        fetch(`https://localhost:3000/api/employe/presences/${token}`),
-        fetch(`https://localhost:3000/api/employe/conges/${token}`)
+        fetch(`/api/employe/salaires/${token}`),
+        fetch(`/api/employe/presences/${token}`),
+        fetch(`/api/employe/conges/${token}`)
       ]);
 
       if (salariesRes.ok) setSalaries(await salariesRes.json());

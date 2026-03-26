@@ -12,7 +12,7 @@ function Pointage() {
     
     const interval = setInterval(loadData, 5000);
     
-    const eventSource = new EventSource('https://localhost:3000/api/sse/dashboard');
+    const eventSource = new EventSource('/api/sse/dashboard');
     
     eventSource.onmessage = (event) => {
       try {

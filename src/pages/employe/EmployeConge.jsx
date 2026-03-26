@@ -37,8 +37,8 @@ function EmployeConge() {
 
     try {
       const [congesRes, statsRes] = await Promise.all([
-        fetch(`https://localhost:3000/api/employe/conges/${token}`),
-        fetch(`https://localhost:3000/api/employe/stats/${token}`)
+        fetch(`/api/employe/conges/${token}`),
+        fetch(`/api/employe/stats/${token}`)
       ]);
 
       if (congesRes.ok) {
@@ -63,7 +63,7 @@ function EmployeConge() {
     const token = localStorage.getItem('employe_token');
 
     try {
-      const response = await fetch(`https://localhost:3000/api/employe/conges/${token}`, {
+      const response = await fetch(`/api/employe/conges/${token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newConge)

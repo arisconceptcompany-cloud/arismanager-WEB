@@ -36,7 +36,7 @@ function EmployePointage() {
 
     try {
       const response = await fetch(
-        `https://localhost:3000/api/employe/presences/${token}?mois=${filter.mois}&annee=${filter.annee}`
+        `/api/employe/presences/${token}?mois=${filter.mois}&annee=${filter.annee}`
       );
       if (response.ok) {
         const data = await response.json();
