@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const BACKEND_IP = 'http://167.86.118.86';
+const BACKEND_IP = 'http://167.86.118.96';
 
 export default defineConfig({
   plugins: [react()],
@@ -10,22 +10,22 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api/login': {
-        target: `${BACKEND_IP}:8082`,
+        target: `https://${BACKEND_IP.replace('http://', '')}:8082`,
         changeOrigin: true,
         secure: false
       },
       '/api/register': {
-        target: `${BACKEND_IP}:8082`,
+        target: `https://${BACKEND_IP.replace('http://', '')}:8082`,
         changeOrigin: true,
         secure: false
       },
       '/api/verify': {
-        target: `${BACKEND_IP}:8082`,
+        target: `https://${BACKEND_IP.replace('http://', '')}:8082`,
         changeOrigin: true,
         secure: false
       },
       '/api/postes': {
-        target: `${BACKEND_IP}:8082`,
+        target: `https://${BACKEND_IP.replace('http://', '')}:8082`,
         changeOrigin: true,
         secure: false
       },
