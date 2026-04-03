@@ -1,0 +1,44 @@
+{
+  "name": "ARIS Manager",
+  "short_name": "ARIS",
+  "description": "Application de gestion des ressources humaines",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4da6ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "fr-FR",
+  "dir": "ltr",
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Tableau de bord",
+      "short_name": "Dashboard",
+      "url": "/home",
+      "description": "Accéder au tableau de bord"
+    },
+    {
+      "name": "Mes pointages",
+      "short_name": "Pointages",
+      "url": "/employe/pointage",
+      "description": "Voir mes pointages"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

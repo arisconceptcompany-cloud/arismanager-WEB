@@ -7,6 +7,7 @@ function EmployeLayout({ children }) {
   const navigate = useNavigate();
   const [employe, setEmploye] = useState(JSON.parse(localStorage.getItem('employe_data') || '{}'));
   const [photoUrl, setPhotoUrl] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -57,6 +58,14 @@ function EmployeLayout({ children }) {
     navigate('/employe-login');
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
+
   const menuItems = [
     { path: '/employe/dashboard', icon: 'fa-home', label: 'Tableau de bord' },
     { path: '/employe/profile', icon: 'fa-user', label: 'Mon Profil' },
@@ -73,7 +82,19 @@ function EmployeLayout({ children }) {
 
   return (
     <div className="app-container">
-      <div className="slidebar">
+      {/* Overlay */}
+      <div 
+        className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`} 
+        onClick={closeSidebar}
+      ></div>
+      
+      {/* Sidebar */}
+      <div className={`slidebar ${sidebarOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <button className="close-sidebar-btn d-lg-none" onClick={closeSidebar}>
+            <i className="fa fa-times"></i>
+          </button>
+        </div>
         <div className="logo-container">
           {photoUrl ? (
             <img src={photoUrl} alt={employe.prenom} className="logo" style={{ borderRadius: '50%', objectFit: 'cover' }} />
@@ -87,7 +108,11 @@ function EmployeLayout({ children }) {
         <ul className="nav flex-column">
           {menuItems.map((item) => (
             <li className="nav-item" key={item.path}>
-              <NavLink to={item.path} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink 
+                to={item.path} 
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={closeSidebar}
+              >
                 <i className={`fa ${item.icon}`}></i>
                 <span>{item.label}</span>
               </NavLink>
@@ -95,9 +120,13 @@ function EmployeLayout({ children }) {
           ))}
         </ul>
       </div>
+      
       <div className="main-content">
         <header className="main-header">
           <div className="header-left">
+            <button className="mobile-menu-toggle" onClick={toggleSidebar}>
+              <i className="fa fa-bars"></i>
+            </button>
             <img src="/logo.png" alt="ARIS" style={{ width: '35px', height: '35px', marginRight: '10px' }} />
             <div>
               <h5 style={{ margin: 0 }}>ARIS Concept</h5>
@@ -106,7 +135,7 @@ function EmployeLayout({ children }) {
           </div>
           <div className="header-right">
             <button className="btn btn-danger btn-sm" onClick={handleLogout} title="Déconnexion">
-              <i className="fa fa-sign-out"></i> Déconnexion
+              <i className="fa fa-sign-out"></i> <span className="d-none d-sm-inline">Déconnexion</span>
             </button>
           </div>
         </header>

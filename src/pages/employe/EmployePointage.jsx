@@ -40,7 +40,9 @@ function EmployePointage() {
       );
       if (response.ok) {
         const data = await response.json();
-        setPresences(data);
+        if (Array.isArray(data)) {
+          setPresences(data);
+        }
       }
     } catch (err) {
       console.error('Error loading presences:', err);
@@ -49,7 +51,16 @@ function EmployePointage() {
     }
   };
 
-  const formatDate = (dateStr) => {
+  const formatDateDisplay = (dateStr) => {
+    if (!dateStr) return '';
+    // Handle "YYYY-MM-DD" format from API
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      const [year, month, day] = dateStr.split('-');
+      const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+      const weekdays = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+      const d = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      return `${weekdays[d.getDay()]} ${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+    }
     const date = new Date(dateStr);
     return date.toLocaleDateString('fr-FR', { 
       weekday: 'long', 
@@ -59,25 +70,20 @@ function EmployePointage() {
     });
   };
 
-  const formatTime = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleTimeString('fr-FR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
+  const calculateHours = (entree, sortie) => {
+    if (!entree || !sortie) return '-';
+    try {
+      const e = new Date(`2000-01-01 ${entree}`);
+      const s = new Date(`2000-01-01 ${sortie}`);
+      const diffMs = s - e;
+      if (diffMs < 0) return '-';
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours}h ${minutes}min`;
+    } catch (e) {
+      return '-';
+    }
   };
-
-  const groupByDate = (presences) => {
-    const grouped = {};
-    presences.forEach(p => {
-      const date = p.scanned_at.split(' ')[0];
-      if (!grouped[date]) grouped[date] = [];
-      grouped[date].push(p);
-    });
-    return grouped;
-  };
-
-  const groupedPresences = groupByDate(presences);
 
   if (loading) {
     return (
@@ -120,7 +126,7 @@ function EmployePointage() {
 
         <div className="card">
           <div className="card-body p-0">
-            {Object.keys(groupedPresences).length === 0 ? (
+            {!presences || presences.length === 0 ? (
               <div className="text-center text-muted py-5">
                 <i className="fa fa-calendar-times-o" style={{ fontSize: '3rem' }}></i>
                 <p className="mt-3">Aucun pointage enregistré pour cette période</p>
@@ -137,41 +143,28 @@ function EmployePointage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.entries(groupedPresences).map(([date, dayPresences]) => {
-                      const entrees = dayPresences.filter(p => p.type === 'entrer');
-                      const sorties = dayPresences.filter(p => p.type === 'sortie');
-                      
-                      let totalHours = '';
-                      if (entrees.length > 0 && sorties.length > 0) {
-                        const firstEntry = new Date(entrees[0].scanned_at);
-                        const lastExit = new Date(sorties[sorties.length - 1].scanned_at);
-                        const diffMs = lastExit - firstEntry;
-                        const hours = Math.floor(diffMs / (1000 * 60 * 60));
-                        const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                        totalHours = `${hours}h ${minutes}min`;
-                      }
-                      
-                      return (
-                        <tr key={date}>
-                          <td><strong>{formatDate(date + 'T00:00:00')}</strong></td>
-                          <td>
-                            {entrees.map((e, i) => (
-                              <span key={i} className="badge bg-success me-1">
-                                {formatTime(e.scanned_at)}
-                              </span>
-                            ))}
-                          </td>
-                          <td>
-                            {sorties.map((s, i) => (
-                              <span key={i} className="badge bg-danger me-1">
-                                {formatTime(s.scanned_at)}
-                              </span>
-                            ))}
-                          </td>
-                          <td><strong className="text-primary">{totalHours}</strong></td>
-                        </tr>
-                      );
-                    })}
+                    {presences.map((p, index) => (
+                      <tr key={p.id || index}>
+                        <td>{formatDateDisplay(p.date)}</td>
+                        <td>
+                          <span className="badge bg-success">
+                            <i className="fa fa-sign-in me-1"></i>
+                            {p.heure_entree || '-'}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={`badge ${p.heure_sortie ? 'bg-danger' : 'bg-warning'}`}>
+                            <i className="fa fa-sign-out me-1"></i>
+                            {p.heure_sortie || 'En cours'}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="text-primary fw-bold">
+                            {calculateHours(p.heure_entree, p.heure_sortie)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

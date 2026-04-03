@@ -53,6 +53,7 @@ function EmployeSalaire() {
   const formatAr = (value) => (value || 0).toLocaleString('fr-FR') + ' Ar';
 
   const formatMonth = (mois, annee) => {
+    if (typeof mois === 'string' && mois.includes(' ')) return mois;
     return `${months.find(m => m.value === mois)?.label || ''} ${annee}`;
   };
 
